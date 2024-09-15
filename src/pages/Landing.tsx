@@ -18,7 +18,7 @@ const Landing = () => {
             
             : <>
               <div className="">
-                <p className='title my-4'><span className='font-semibold'>Desbloquea tu Potencial:</span> Aprender Nunca Fue Tan Fácil</p>
+                <p className='title my-4 font-light'><span className='font-semibold'>Desbloquea tu Potencial:</span> Aprender Nunca Fue Tan Fácil</p>
                 <p className='subtitle my-8'>Descubre estrategias efectivas y recursos gratuitos para llevar tu educación al siguiente nivel</p>
                 <div className="my-4 w-100 flex">
                   <Link to="/login" className='btn-primary mr-4'>Inicia sesión</Link>

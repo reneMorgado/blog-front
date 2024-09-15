@@ -1,25 +1,25 @@
 import { useContext, useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { Comment, Post } from '../interfaces/api';
 import { approveComment, fetchPost, postComment } from '../helpers/fetch';
 import { errorAlert, succesAlert } from '../helpers/alerts';
 import { formatDate } from '../helpers/format';
 import CommentCard from '../components/CommentCard';
 import { AuthContext } from '../context/userContext';
-import { onValue, orderByChild, query, ref, equalTo, get, onChildChanged, onChildRemoved, onChildAdded } from 'firebase/database';
+import { onValue, orderByChild, query, ref, equalTo, get, onChildChanged, onChildRemoved } from 'firebase/database';
 import db from '../helpers/firebase';
 import { sendNotification } from '../helpers/notifications';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import Header from '../components/Header';
+import Loader from '../components/Loader';
 
 const BlogDetail = () => {
 
     const [showedComments, setShowedComments] = useState<any[]>([]);
     const [post, setPost] = useState<Post>();
     const [commentSize, setCommentSize] = useState(0);
-
-    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
 
     const authContext = useContext(AuthContext);
     const { id } = useParams();
@@ -31,6 +31,7 @@ const BlogDetail = () => {
     }, [authContext]);
 
     const getCommentsByTypeOfUser = (type: string) => {
+        setLoading(true)
         const commentsByType: { [key: string]: () => void } = {
             'admin': () => {
                 const approvedCommentsRef = query(ref(db, 'comments'), orderByChild('postId'), equalTo(id as string));
@@ -55,9 +56,7 @@ const BlogDetail = () => {
                     setCommentSize((count) => {
                         if (comments.length === count + 1) {
                             const newComment = comments[comments.length - 1];
-                            approveComment(newComment.id).then((response) => {
-
-                            });
+                            approveComment(newComment.id).then((response) => {});
                         }
                         return comments.length
                     });
@@ -88,12 +87,15 @@ const BlogDetail = () => {
                     setShowedComments(comments);
                 });
                 onChildChanged(approvedCommentsRef, async (snapshot) => {
-                    const changedComment = snapshot.val();
-                    sendNotification('Tu comentario se ha aprobado!', () => { navigate(`posts/${changedComment.postId}`) });
+                    if(type === 'user' && authContext?.userId === snapshot.val().creator) {
+                        console.log(authContext)
+                        sendNotification('Tu comentario se ha aprobado!');
+                    }
                 });
                 onChildRemoved(approvedCommentsRef, async (snapshot) => {
-                    const removedComment = snapshot.val();
-                    sendNotification('Tu comentario se ha eliminado!', () => { navigate(`posts/${removedComment.postId}`) });
+                    if(type === 'user' && authContext?.userId === snapshot.val().creator) {
+                        sendNotification('Tu comentario se ha eliminado!');
+                    }
                 });
             },
             'invited': () => {
@@ -121,15 +123,19 @@ const BlogDetail = () => {
                 });
             }
         }
+        setLoading(false)
         commentsByType[type]();
     }
 
     const getPost = async () => {
         if (id) {
+            setLoading(true)
             const response = await fetchPost(id);
             if (response === undefined) {
+                setLoading(false)
                 errorAlert('No se pudo cargar el post', 'Error');
             } else {
+                setLoading(false)
                 setPost(response);
             }
         }
@@ -142,12 +148,14 @@ const BlogDetail = () => {
     });
 
     const onSubmit = async (values: any) => {
+        setLoading(true)
         const newComment = { postId: id, ...values }
         const response = await postComment(newComment);
         if (response.status === 200) {
+            setLoading(false)
             succesAlert('Comentario enviado correctamente!', 'Gracias por tu comentario');
-
         } else {
+            setLoading(false)
             errorAlert('No se pudo enviar el comentario', 'Error');
         }
 
@@ -169,6 +177,8 @@ const BlogDetail = () => {
         }
     }
 
+    if(loading) return <Loader/>
+
     return (
         <div className="container">
             <Header />
@@ -181,7 +191,7 @@ const BlogDetail = () => {
 
             </div>
             <div className="p-8 background-login-register">
-                <p className='title mb-4'>{post?.title}</p>
+                <p className='title mb-4 font-light'>{post?.title}</p>
                 <p className='normal-font'>Autor: {post?.creatorName}</p>
                 <p className='normal-font mb-4'>{formatDate(post?.createdAt as string)}</p>
                 <div className="w-full flex justify-center rounded-md shadow-inner">

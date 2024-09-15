@@ -4,13 +4,15 @@ import { register } from '../helpers/fetch';
 import { LoginResponse } from '../interfaces/api';
 import { errorAlert, succesAlert } from '../helpers/alerts';
 import { Link, useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { AuthContext } from '../context/userContext';
 import Header from '../components/Header';
+import Loader from '../components/Loader';
 
 const Register = () => {
 
 	const authContext = useContext(AuthContext)
+	const [loading, setLoading] = useState(false);
 
 	const navigate = useNavigate();
 
@@ -29,6 +31,7 @@ const Register = () => {
 	});
 
 	const onSubmit = async (values: any) => {
+		setLoading(true)
         const { email, password, username } = values;
 		const response = await register({email, username, password}) as LoginResponse;
 		if (response.status === 200) {
@@ -36,10 +39,14 @@ const Register = () => {
 			authContext?.setIsAuthenticated(true);
 			localStorage.setItem('token', response.message);
 			succesAlert("Te has registrado correctamente!", "Bienvenido", () => { navigate('/blog')});
+			setLoading(false)
 		} else {
 			errorAlert("Error en el registro", response.message);
+			setLoading(false)
 		}
 	};
+
+	if(loading) return <Loader />
 
 	return (
 		<div className='container'>

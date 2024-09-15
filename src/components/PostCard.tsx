@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Post } from '../interfaces/api'
 import { Link } from 'react-router-dom'
 import { formatDate } from '../helpers/format'
-import { deletePost } from '../helpers/fetch';
-import { errorAlert, succesAlert } from '../helpers/alerts';
+import { errorAlert } from '../helpers/alerts';
+import Loader from './Loader';
 
 interface PostCardProps {
     post: Post;
@@ -12,6 +12,9 @@ interface PostCardProps {
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post, admin, handleDeletePost }) => {
+
+    const [loading, setLoading] = useState(false);
+
     const getBlobImageURL = () => {
         try {
             const base64String = post.image.split(',')[1]; // Remove the data URL prefix if present
@@ -30,15 +33,20 @@ const PostCard: React.FC<PostCardProps> = ({ post, admin, handleDeletePost }) =>
     }
 
     const onDeleteClick = async () => {
+        setLoading(true);
         if (handleDeletePost) {
+            setLoading(false);
             handleDeletePost(post.id);
         } else {
+            setLoading(false);
             errorAlert('Delete function is not defined', 'Error');
         }
     }
 
+    if(loading) return <Loader/>
+
     return (
-        <div className="max-w-md w-full h-96 bg-white shadow-md rounded-lg p-4 flex flex-col justify-between">
+        <div className="max-w-md w-full post-card bg-white shadow-md rounded-lg p-4 flex flex-col justify-between">
             <div className="">
                 <p className='font-thin text-sm mb-2'>Creado por: {post.creatorName} el {formatDate(post.createdAt)}</p>
                 <p className='font-semibold text-xl mb-4'>{post.title}</p>

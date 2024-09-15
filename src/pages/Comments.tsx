@@ -48,7 +48,7 @@ const Comments = () => {
             <div className="w-full flex flex-col">
                 <Link className='w-full p-6 shadow bg-gray-100 font-thin text-primary text-center' to="/admin">Volver al Panel de Administración</Link>
                 <div className="background-login-register w-full flex flex-col p-8">
-                    <h3 className='title mb-4 mt-4'>Comentarios pendientes de aprobación:</h3>
+                    <h3 className='title mb-4 mt-4 font-light'>Comentarios pendientes de aprobación:</h3>
                     {showedComments.length > 0 ? showedComments.map((comment: Comment) => (
                         <CommentCard key={comment.id} comment={comment} permissions={authContext?.permissions as string[]} />
                     )): <p className='normal-font'>No hay comentarios pendientes de aprobación.</p>}

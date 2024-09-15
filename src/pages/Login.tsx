@@ -4,11 +4,14 @@ import { login } from '../helpers/fetch';
 import { LoginResponse } from '../interfaces/api';
 import { errorAlert, succesAlert } from '../helpers/alerts';
 import { Link, useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { AuthContext } from '../context/userContext';
 import Header from '../components/Header';
+import Loader from '../components/Loader';
 
 const Login = () => {
+
+	const [loading, setLoading] = useState(false);
 
 	const authContext = useContext(AuthContext)
 
@@ -25,16 +28,21 @@ const Login = () => {
 	});
 
 	const onSubmit = async (values: any) => {
+		setLoading(true)
 		const response = await login(values) as LoginResponse;
 		if (response.status === 200) {
 			authContext?.setToken(response.message);
 			authContext?.setIsAuthenticated(true);
 			localStorage.setItem('token', response.message);
 			succesAlert("Has iniciado sesión correctamente!", "Bienvenido", () => { navigate('/blog')});
+			setLoading(false)
 		} else {
 			errorAlert("Error al iniciar sesión", response.message);
+			setLoading(false)
 		}
 	};
+
+	if(loading) return <Loader />
 
 	return (
 		<div className='container'>

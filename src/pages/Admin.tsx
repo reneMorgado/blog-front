@@ -1,18 +1,26 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Header from '../components/Header'
 import { Post, PostsResponse } from '../interfaces/api'
 import { deletePost, fetchPosts } from '../helpers/fetch'
 import { errorAlert, succesAlert } from '../helpers/alerts'
 import PostCard from '../components/PostCard'
+import Loader from '../components/Loader'
 
 const Admin = () => {
 
-    const [posts, setPosts] = React.useState<Post[]>([]);
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [loading, setLoading] = useState(false);
 
     const getPosts = async () => {
-        const response: PostsResponse = await fetchPosts()
-        setPosts(response.posts);
+        setLoading(true);
+        try {
+            const response: PostsResponse = await fetchPosts()
+            setPosts(response.posts);
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+        }
     }
 
     useEffect(() => {
@@ -20,14 +28,19 @@ const Admin = () => {
     }, []);
 
     const handleDeletePost = async (id: string) => {
+        setLoading(true); 
         const response = await deletePost(id);
         if (response.status === 200) {
+            setLoading(false);
             succesAlert('Publicación eliminada con éxito', '');
         } else {
+            setLoading(false);
             errorAlert('No se pudo eliminar la publicación', '');
         }
         getPosts(); // Refresh the posts list after deleting
     }
+
+    if(loading) return <Loader/>
 
     return (
         <div className='container'>

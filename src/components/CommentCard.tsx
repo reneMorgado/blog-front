@@ -1,30 +1,39 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { CommentCardProps } from '../interfaces/api';
 import { formatDate } from '../helpers/format';
 import { approveComment, discardComment } from '../helpers/fetch';
 import { errorAlert, succesAlert } from '../helpers/alerts';
-
-
+import Loader from './Loader';
 
 const CommentCard: React.FC<CommentCardProps> = ({ permissions, comment }) => {
 
+    const [loading, setLoading] = useState(false);
+
     const hanldeApproveComment =  async() => {
+        setLoading(true);
         const response = await approveComment(comment.id);
         if(response.status === 200) {
+            setLoading(false);
             succesAlert('Comentario aprobado correctamente!', '');
         } else { 
+            setLoading(false);
             errorAlert('Error al aprobar comentario', '');
         }
     }
 
     const hanldeDiscardComment = async () => {
+        setLoading(true);
         const response = await discardComment(comment.id);
         if(response.status === 200) {
+            setLoading(false);
             succesAlert('Comentario eliminado correctamente!', '');
         } else { 
+            setLoading(false);
             errorAlert('Error al aprobar comentario', '');
         }
     }
+
+    if(loading) return <Loader />
 
     return (
         <div className={'my-4 rounded-lg shadow-md p-4 ' + (comment.approved ? 'bg-gray-100' : 'bg-yellow-100')}>

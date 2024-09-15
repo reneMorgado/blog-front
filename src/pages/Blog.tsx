@@ -6,10 +6,12 @@ import { Post, PostsResponse } from '../interfaces/api';
 import PostCard from '../components/PostCard';
 import { AuthContext } from '../context/userContext';
 import Header from '../components/Header';
+import Loader from '../components/Loader';
 
 const Blog = () => {
 
     const [posts, setPosts] = useState<Post[]>([]);
+    const [loading, setLoading] = useState(false);
 
     const authContext = useContext(AuthContext);
 
@@ -17,7 +19,13 @@ const Blog = () => {
 
 
     const closeSession = async () => {
-        await logout();
+        setLoading(true)
+        try {
+            await logout();
+            setLoading(false)
+        } catch (error) {
+            setLoading(false)
+        }
         localStorage.removeItem('token');
         authContext?.setIsAuthenticated(false);
         authContext?.setToken('');
@@ -25,13 +33,21 @@ const Blog = () => {
     }
 
     const getPosts = async () => {
-        const response: PostsResponse = await fetchPosts()
-        setPosts(response.posts);
+        try {
+            const response: PostsResponse = await fetchPosts()
+            setPosts(response.posts);
+            setLoading(false)
+        } catch (error) {
+            setLoading(false)
+        }
     }
 
     useEffect(() => {
+        setLoading(true)
         getPosts();
     }, []);
+
+    if(loading) return <Loader/>
 
 
     return (

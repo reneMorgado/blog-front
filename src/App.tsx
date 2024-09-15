@@ -1,19 +1,22 @@
+import { lazy } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './App.scss';
-import Landing from './pages/Landing';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import AlreadyLoggedIn from './middlewares/AlreadyLoggedIn';
-import Blog from './pages/Blog';
-import BlogDetail from './pages/BlogDetail';
 import { AuthContext } from './context/userContext';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { getPermissions, fetchUserDataFromToken } from './helpers/fetch';
-import Admin from './pages/Admin';
-import IsAdmin from './middlewares/IsAdmin';
-import AddPost from './pages/AddPost';
-import EditPost from './pages/EditPost';
-import Comments from './pages/Comments';
+import Loader from './components/Loader';
+import './App.scss';
+const Landing = lazy(() => import('./pages/Landing'));
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const AlreadyLoggedIn = lazy(() => import('./middlewares/AlreadyLoggedIn'));
+const Blog = lazy(() => import('./pages/Blog'));
+const BlogDetail = lazy(() => import('./pages/BlogDetail'));
+const Admin = lazy(() => import('./pages/Admin'));
+const IsAdmin = lazy(() => import('./middlewares/IsAdmin'));
+const AddPost = lazy(() => import('./pages/AddPost'));
+const EditPost = lazy(() => import('./pages/EditPost'));
+const Comments = lazy(() => import('./pages/Comments'));
+
 
 function App() {
 
@@ -49,42 +52,62 @@ function App() {
 		<Router>
 			<AuthContext.Provider value={{ isAuthenticated: isAuthenticated, permissions: permissions, token: token, setToken: setToken, setIsAuthenticated: setIsAuthenticated, typeOfUser: typeOfUser, userId: userId, userName: userName }}>
 				<Routes>
-					<Route path="/" element={<Landing />} />
+					<Route path="/" element={
+						<Suspense fallback={<Loader />}>
+							<Landing />
+						</Suspense>
+					} />
 					<Route path="/login" element={
-						<AlreadyLoggedIn path='/blog'>
-							<Login />
-						</AlreadyLoggedIn>
+						<Suspense fallback={<Loader />}>
+							<AlreadyLoggedIn path='/blog'>
+								<Login />
+							</AlreadyLoggedIn>
+						</Suspense>
 					} />
 					<Route path='/register' element={
-						<AlreadyLoggedIn path='/blog'>
-							<Register />
-						</AlreadyLoggedIn>
+						<Suspense fallback={<Loader />}>
+							<AlreadyLoggedIn path='/blog'>
+								<Register />
+							</AlreadyLoggedIn>
+						</Suspense>
 					} />
 					<Route path='/blog' element={
-						<Blog />
+						<Suspense fallback={<Loader />}>
+							<Blog />
+						</Suspense>
 					} />
 					<Route path='/post/:id' element={
-						<BlogDetail />
+						<Suspense fallback={<Loader />}>
+							<BlogDetail />
+						</Suspense>
 					} />
 					<Route path='/admin' element={
-						<IsAdmin>
-							<Admin />
-						</IsAdmin>
+						<Suspense fallback={<Loader />}>
+							<IsAdmin>
+								<Admin />
+							</IsAdmin>
+						</Suspense>
 					} />
 					<Route path='/add-post' element={
-						<IsAdmin>
-							<AddPost />
-						</IsAdmin>
+						<Suspense fallback={<Loader />}>
+							<IsAdmin>
+								<AddPost />
+							</IsAdmin>
+						</Suspense>
 					} />
 					<Route path='/edit-post/:id' element={
-						<IsAdmin>
-							<EditPost />
-						</IsAdmin>
+						<Suspense fallback={<Loader />}>
+							<IsAdmin>
+								<EditPost />
+							</IsAdmin>
+						</Suspense>
 					} />
 					<Route path='/comments' element={
-						<IsAdmin>
-							<Comments />
-						</IsAdmin>
+						<Suspense fallback={<Loader />}>
+							<IsAdmin>
+								<Comments />
+							</IsAdmin>
+						</Suspense>
 					} />
 				</Routes>
 

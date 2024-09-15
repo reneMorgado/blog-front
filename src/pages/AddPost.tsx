@@ -2,10 +2,11 @@ import React, { useState } from 'react'
 import Header from '../components/Header'
 import { addPost } from '../helpers/fetch';
 import { errorAlert, succesAlert } from '../helpers/alerts';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../context/userContext';
 import { formatDate } from '../helpers/format';
+import Loader from '../components/Loader';
 
 const AddPost = () => {
 
@@ -23,6 +24,7 @@ const AddPost = () => {
     const [currentAdding, setCurrentAdding] = useState('');
     const [addingValue, setCurrentAddingValue] = useState('');
     const [contentToAdd, setContentToAdd] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleSetTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.value.length > 50) return
@@ -86,6 +88,7 @@ const AddPost = () => {
     }
 
     const handleSubmit = async () => {
+        setLoading(true);
         if (title.length === 0) {
             setTitleHelper('Campo requerido');
             return
@@ -106,10 +109,13 @@ const AddPost = () => {
         if (titleHelper === '' && imageHelper === '' && contentHelper === '') {
             console.log('Data:', data);
         }
+        setLoading(true);
         const response = await addPost(data);
         if (response.status === 200) {
+            setLoading(false);
             succesAlert('Publicación añadida correctamente!', 'Gracias por tu publicación', () => navigate('/admin'));
         } else {
+            setLoading(false);
             errorAlert('No se pudo añadir la publicación', 'Error');
         }
     }
@@ -168,13 +174,15 @@ const AddPost = () => {
         setContentToAdd(`<div class="flex justify-center w-full"><img src="${e.target.value}" class="max-w-72"/></div>`);
     }
 
+    if(loading) return <Loader />
+
     return (
         <div className='container'>
             <Header />
-            <div className="background-login-register p-8 grid grid-cols-1 grid-rows-2 md:grid-cols-2 md:grid-rows-1">
+            <div className="background-login-register p-2 sm:p-8 grid grid-cols-1 grid-rows-2 md:grid-cols-2 md:grid-rows-1">
                 <div className="col-start-1 row-start-1">
                     <div className="form m-4">
-                        <p className='title'>Añadir nueva publicación</p>
+                        <p className='title font-light'>Añadir nueva publicación</p>
                         <div className='input-container'>
                             <label className='input-label' htmlFor="title">Título</label>
                             <input placeholder='Máximo 50 caracteres' className='input-form' aria-labelledby='title-messages' type="text" name="title" id="title" onChange={handleSetTitle} value={title} />
@@ -198,11 +206,12 @@ const AddPost = () => {
                             <span className='input-helper' id="content-messages">{contentHelper}</span>
                         </div>
                         <button onClick={handleSubmit} className='btn-primary'>Añadir Publicación</button>
+                        <Link className='btn-secondary' to={`/admin`}>Cancelar</Link>
                     </div>
                 </div>
                 <div className="md:col-start-2 col-start-1 row-start-2 md:row-start-1 p-4">
                     <div className="w-full bg-white rounded-lg shadow-md p-4">
-                        <p className='title mb-4'>{title}</p>
+                        <p className='title mb-4 font-light'>{title}</p>
                         <p className='normal-font'>Autor: {authContext?.userName}</p>
                         <p className='normal-font mb-4'>{formatDate(new Date().toISOString())}</p>
                         <div className="w-full flex justify-center rounded-md shadow-inner">
@@ -214,13 +223,13 @@ const AddPost = () => {
 
             </div>
             {showModal && (<>
-                <div className="modal fixed top-0 left-0 z-10 w-full h-full bg-black opacity-50 flex items-center justify-center">
+                <div className="fixed top-0 left-0 z-10 w-full h-full bg-black opacity-50 flex items-center justify-center">
 
                 </div>
-                <div className="modal fixed top-1/4 left-1/4 z-10 w-1/2 p-8 bg-white rounded-lg shadow-md">
+                <div className="left-8 fixed top-1/4 md:left-1/4 z-10 w-5/6 md:w-1/2 p-8 bg-white rounded-lg shadow-md">
                     {currentAdding === 'title' &&
                         <>
-                            <p className="title mb-2">Agregar título</p>
+                            <p className="title mb-2 font-light">Agregar título</p>
                             <div className="input-container mb-4">
                                 <label className='input-label' htmlFor="title">Título</label>
                                 <input placeholder='Máximo 50 caracteres' className='input-form' aria-labelledby='title-messages' type="text" name="title" id="title" onChange={(e) => addTitleSubtitle(e, 'title')} value={addingValue} />
@@ -229,7 +238,7 @@ const AddPost = () => {
                     }
                     {currentAdding === 'subtitle' &&
                         <>
-                            <p className="title mb-2">Agregar subtítulo</p>
+                            <p className="title mb-2 font-light">Agregar subtítulo</p>
                             <div className="input-container mb-4">
                                 <label className='input-label' htmlFor="title">Subtítulo</label>
                                 <input placeholder='Máximo 50 caracteres' className='input-form' aria-labelledby='title-messages' type="text" name="title" id="title" onChange={(e) => addTitleSubtitle(e, 'subtitle')} value={addingValue} />
@@ -238,7 +247,7 @@ const AddPost = () => {
                     }
                     {currentAdding === 'text' &&
                         <>
-                            <p className="title mb-2">Agregar texto</p>
+                            <p className="title mb-2 font-light">Agregar texto</p>
                             <div className="input-container mb-4">
                                 <label className='input-label' htmlFor="title">Texto</label>
                                 <input placeholder='Máximo 50 caracteres' className='input-form' aria-labelledby='title-messages' type="text" name="title" id="title" onChange={addText} value={addingValue} />
@@ -247,7 +256,7 @@ const AddPost = () => {
                     }
                     {currentAdding === 'list' &&
                         <>
-                            <p className="title mb-2">Agregar elementos, separados por |</p>
+                            <p className="title mb-2 font-light">Agregar elementos, separados por |</p>
                             <div className="input-container mb-4">
                                 <label className='input-label' htmlFor="title">Elementos</label>
                                 <input placeholder='Máximo 50 caracteres' className='input-form' aria-labelledby='title-messages' type="text" name="title" id="title" onChange={addList} value={addingValue} />
@@ -256,14 +265,14 @@ const AddPost = () => {
                     }
                     {currentAdding === 'image' &&
                         <>
-                            <p className="title mb-2">URL de la imagen</p>
+                            <p className="title mb-2 font-light">URL de la imagen</p>
                             <div className="input-container mb-4">
                                 <label className='input-label' htmlFor="title">URL</label>
                                 <input placeholder='Máximo 50 caracteres' className='input-form' aria-labelledby='title-messages' type="text" name="title" id="title" onChange={addImage} value={addingValue} />
                             </div>
                         </>
                     }
-                    <div className="modal-footer">
+                    <div className="flex md:flex-row flex-col gap-4 items-center ">
                         <button className="btn-primary" onClick={confirmAdd}>Agregar</button>
                         <button className="btn-secondary mr-2" onClick={closeModal}>Cancelar</button>
                     </div>
