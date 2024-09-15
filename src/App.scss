@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.background-landing{
+    @apply bg-no-repeat bg-center bg-cover;
+    background-image: url('./images/blob.svg');
+}
+
+.background-login-register{
+    @apply bg-no-repeat bg-top bg-contain;
+    background-image: url('./images/login-register-bg.svg');
+}
+
+.btn-primary{
+    @apply max-w-52 text-center w-full border-none py-2 px-4 md:px-8 bg-primary border rounded-2xl text-white font-light;
+}
+
+.btn-secondary{
+    @apply max-w-52 text-center w-full border-none py-2 px-4 md:px-8 bg-secondary border rounded-2xl text-white font-light;
+}
+
+.link{
+    @apply text-primary font-normal;
+}
+
+.normal-font{
+    @apply font-extralight text-base;
+}
+
+.title{
+    @apply text-3xl;
+}
+
+.subtitle{
+    @apply text-xl font-extralight text-gray-500;
+}
+
+.container{
+    @apply w-full max-w-7xl mx-auto;
+}
+
+.form{
+    @apply flex flex-col gap-4 shadow-lg p-8 rounded-xl bg-white items-center;
+}
+
+.comment-box{
+    @apply flex flex-col gap-4 shadow-lg p-8 rounded-xl bg-white;
+}
+
+.input-container{
+    @apply flex flex-col w-full;
+}
+
+.input-label{
+    @apply relative font-extralight bg-white top-2 w-fit text-sm left-2;
+}
+
+.input-form{
+    @apply font-light border border-primary py-2 px-4 md:px-4 rounded-2xl outline-none;
+}
+
+.input-helper{
+    @apply font-extralight text-xs ml-2 text-red-500;
+}
+
+.input-area{
+    @apply font-light border border-primary pt-2 pb-10 px-4 md:px-4 overflow-auto rounded-t-2xl outline-none h-56;
+}
+
+.input-actions{
+    @apply relative bottom-0 left-0 w-full z-30;
+}
+
+.input-action{
+    @apply border p-2 font-light border-primary w-1/5;
+}
