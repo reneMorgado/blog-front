@@ -17,7 +17,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, admin, handleDeletePost }) =>
 
     const getBlobImageURL = () => {
         try {
-            const base64String = post.image.split(',')[1]; // Remove the data URL prefix if present
+            const base64String = post.image.split(',')[1];
             const byteCharacters = atob(base64String);
             const byteNumbers = new Array(byteCharacters.length);
             for (let i = 0; i < byteCharacters.length; i++) {
@@ -27,7 +27,6 @@ const PostCard: React.FC<PostCardProps> = ({ post, admin, handleDeletePost }) =>
             const blob = new Blob([byteArray], { type: 'image/jpeg' });
             return URL.createObjectURL(blob);
         } catch (error) {
-            console.error('Failed to decode base64 string:', error);
             return '';
         }
     }

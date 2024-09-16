@@ -7,7 +7,7 @@ export const theme = {
       "secondary": "#F67280"
     },
     fontFamily: {
-      sans: ['Roboto', 'sans-serif'],  // Establecer Roboto como fuente predeterminada
+      sans: ['Roboto', 'sans-serif'],
     },
   },
 };

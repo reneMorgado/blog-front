@@ -95,7 +95,7 @@ const EditPost = () => {
 
     const getBlobImageURL = () => {
         try {
-            const base64String = image.split(',')[1]; // Remove the data URL prefix if present
+            const base64String = image.split(',')[1];
             const byteCharacters = atob(base64String as string);
             const byteNumbers = new Array(byteCharacters.length);
             for (let i = 0; i < byteCharacters.length; i++) {
@@ -127,9 +127,7 @@ const EditPost = () => {
             title: title,
             image: image,
         };
-        if (titleHelper === '' && imageHelper === '' && contentHelper === '') {
-            console.log('Data:', data);
-        }
+
         setLoading(true)
         const response = await editPost(id as string,data);
         if (response.status === 200) {
@@ -184,7 +182,6 @@ const EditPost = () => {
             list += `<li>${option}</li>`;
         });
         list += '</ul>';
-        console.log('Options:', list);
         setCurrentAddingValue(e.target.value);
         setContentToAdd(list);
     }

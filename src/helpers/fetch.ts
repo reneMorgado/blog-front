@@ -22,7 +22,6 @@ export const login = async (body: LoginBody): Promise<LoginResponse | void> => {
         const data: LoginResponse = await response.json();
         return { ...data, status };
     } catch (error) {
-        console.log(error);
     }
 }
 
@@ -37,7 +36,6 @@ export const register = async (body: LoginBody): Promise<LoginResponse | void> =
         const data: LoginResponse = await response.json();
         return { ...data, status };
     } catch (error) {
-        console.log(error);
     }
 }
 
@@ -54,7 +52,6 @@ export const verifyToken = async (token: string): Promise<boolean> => {
         const status: string = data.message;
         return status === "OK";
     } catch (error) {
-        console.log(error);
         return false;
     }
 }
@@ -88,7 +85,6 @@ export const fetchPosts = async (): Promise<PostsResponse>  => {
         const data: PostsResponse = await response.json();
         return { ...data, status };
     } catch (error) {
-        console.log(error);
         return { posts: [{} as Post], status: 500, message: 'Error fetching posts' };
     }
 }
@@ -111,7 +107,6 @@ export const fetchPost = async (id: string): Promise<Post | undefined> => {
             return undefined;
         }
     } catch (error) {
-        console.log(error);
         return undefined;
     }
 }
@@ -156,11 +151,9 @@ export const postComment = async (body: {}): Promise<commentCreateResponse> => {
             },
             body: JSON.stringify(body)
         });
-        console.log(headersToken)
         const json = await response.json();
         return {status: response.status, message: json.message};
     } catch (error) {
-        console.log(error);
         return {status: 500, message: error as string};
     }
 }
@@ -177,7 +170,6 @@ export const approveComment = async (commentId: string): Promise<commentCreateRe
         const json = await response.json();
         return {status: response.status, message: json.message};
     } catch (error) {
-        console.log(error);
         return {status: 500, message: error as string};
     }
 }
@@ -194,7 +186,6 @@ export const discardComment = async (commentId: string): Promise<commentCreateRe
         const json = await response.json();
         return {status: response.status, message: json.message};
     } catch (error) {
-        console.log(error);
         return {status: 500, message: error as string};
     }
 }
@@ -212,7 +203,6 @@ export const addPost = async (body: {}): Promise<commentCreateResponse> => {
         const json = await response.json();
         return {status: response.status, message: json.message};
     } catch (error) {
-        console.log(error);
         return {status: 500, message: error as string};
     }
 }
@@ -229,7 +219,6 @@ export const deletePost = async (postId: string): Promise<commentCreateResponse>
         const json = await response.json();
         return {status: response.status, message: json.message};
     } catch (error) {
-        console.log(error);
         return {status: 500, message: error as string};
     }
 }
@@ -247,7 +236,6 @@ export const editPost = async (postId: string, body: {}): Promise<commentCreateR
         const json = await response.json();
         return {status: response.status, message: json.message};
     } catch (error) {
-        console.log(error);
         return {status: 500, message: error as string};
     }
 }

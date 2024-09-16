@@ -37,7 +37,7 @@ const Admin = () => {
             setLoading(false);
             errorAlert('No se pudo eliminar la publicación', '');
         }
-        getPosts(); // Refresh the posts list after deleting
+        getPosts();
     }
 
     if(loading) return <Loader/>

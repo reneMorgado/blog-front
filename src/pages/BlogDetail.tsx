@@ -88,7 +88,6 @@ const BlogDetail = () => {
                 });
                 onChildChanged(approvedCommentsRef, async (snapshot) => {
                     if(type === 'user' && authContext?.userId === snapshot.val().creator) {
-                        console.log(authContext)
                         sendNotification('Tu comentario se ha aprobado!');
                     }
                 });
@@ -163,7 +162,7 @@ const BlogDetail = () => {
 
     const getBlobImageURL = () => {
         try {
-            const base64String = post?.image.split(',')[1]; // Remove the data URL prefix if present
+            const base64String = post?.image.split(',')[1];
             const byteCharacters = atob(base64String as string);
             const byteNumbers = new Array(byteCharacters.length);
             for (let i = 0; i < byteCharacters.length; i++) {
